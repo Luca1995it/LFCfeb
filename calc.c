@@ -1,42 +1,48 @@
 #include "calc.h"
+#include "y.tab.h"
+#include <stdarg.h>
+#include <string.h>
 
 
-nodeType *con(int value){
+entryVar * varTable[DIM_MAX];   
+entryPointer * puntTable[DIM_MAX]; 
+
+int dimVar = 0;
+int dimPt = 0;
+
+nodeType * con(int value){
     nodeType *p;
     /* allocate node space in memory */
     if((p=malloc(sizeof(nodeType))) == NULL){
         yyerror("out of memory");
     }
     /* copy information */
-    p->uid = uid++;
     p->type = typeCon;
     p->con.value = value;
 
     return p;
 }
 
-nodeType *id (char * nome){
+nodeType * id (char * nome){
     nodeType *p;
     if((p=malloc(sizeof(nodeType)))==NULL){
         yyerror("out of memory");
     }
-    p->uid = uid++;
     p->type = typeId;
     
-    entryVar * tmp = searchVariabile(nome);
+    entryVar * tmp = searchVariable(nome);
     if(tmp == NULL){
-    		p->id.pos = insertVariabile(nome);
+    		p->id.pos = insertVariable(nome);
     	} else p->id.pos = tmp;
 
     return p;
 }
 
-nodeType *pt(char * nome){
+nodeType * pt(char * nome){
 	nodeType *p;
     if((p=malloc(sizeof(nodeType)))==NULL){
         yyerror("out of memory");
     }
-    p->uid = uid++;
     p->type = typePunt;
     
     entryPointer * tmp = searchPointer(nome);
@@ -47,7 +53,7 @@ nodeType *pt(char * nome){
     return p;
 }
 
-nodeType *opr(int oper, int nops, ...){
+nodeType * opr(int oper, int nops, ...){
     va_list ap; /* (ap = argument pointer) va_list is used to declare a variable
                  which, from time to time, is referring to an argument*/
     nodeType *p;
@@ -59,7 +65,6 @@ nodeType *opr(int oper, int nops, ...){
     if((p->opr.op = malloc(nops*sizeof(nodeType)))== NULL){
         yyerror("out of memory");
     }
-    p->uid = uid++;
     p->type = typeOpr;
     p->opr.oper = oper;
     p->opr.nops = nops;
@@ -73,7 +78,6 @@ nodeType *opr(int oper, int nops, ...){
                                             to decide what kind of type to return and
                                             how much to move forward the pointer.
                                             */
-        p->opr.op[i]->uid = uid++;
     }
     va_end(ap); /* MUST be called BEFORE THE FUNCTION TERMINATES. it provides
                  the necessary cleaning functions.*/
@@ -82,41 +86,18 @@ nodeType *opr(int oper, int nops, ...){
     return p;
 }
 
-/*
-typedef struct {
-	char * name;
-	int value;
-} entryVar;
-
-
-typedef struct {
-	char * name;
-	entryVar * p;
-	int attiva;
-} entryPointer;
-
-void freeNode(nodeType *p);
-int ex(nodeType *p);
-         
-entryVar * varTable[NUM_VAR];   
-entryPointer * puntTable[NUM_VAR]; 
-
-int dimVar = 0;
-int dimPt = 0;
-
-*/
 
 entryVar * insertVariable(char * n){
 	if(((varTable[dimVar] = malloc(sizeof(entryVar))) == NULL) || (dimVar == DIM_MAX)){
 		yyerror("out of memory");
 	}
 	varTable[dimVar]->name = n;
-	varTable[dimVar]->value = v;
+	varTable[dimVar]->value = 0;
 	varTable[dimVar]->attivo = 0;
 	return varTable[dimVar++];
 }
 
-entryVar * searchVariabile(char * n){
+entryVar * searchVariable(char * n){
 	for(int i = 0; i < dimVar; i++){
 		if(strcmp(varTable[i]->name,n) == 0) return varTable[i];
 	}
@@ -128,8 +109,8 @@ entryPointer * insertPointer(char * n){
 		yyerror("out of memory");
 	}
 	puntTable[dimPt]->name = n;
-	puntTalbe[dimPt]->p = NULL;
-	puntTable[dimPt]->attiva = 0;
+	puntTable[dimPt]->p = NULL;
+	puntTable[dimPt]->attivo = 0;
 	return puntTable[dimPt++];
 }
 
@@ -162,8 +143,10 @@ int ex(nodeType *p) {
         							yyerror("Var not declared");
         						}
         						return p->id.pos->value;
-        	case typePt:			if(!p->pt.pos->attivo){
-        							yyerror("Var not declared");
+        	case typePunt:		if(!p->pt.pos->attivo){
+        							yyerror("Pointer not declared");
+        						} else if(p->pt.pos->p == NULL){
+        							yyerror("Pointer not assigned");
         						}
         						return p->pt.pos->p->value;
         case typeOpr:
@@ -191,9 +174,10 @@ int ex(nodeType *p) {
                 case 'd':		p->opr.op[0]->pt.pos->attivo = 1;
                 					p->opr.op[0]->pt.pos->p = NULL;
                 					return 0; 
-                case 'p'			p->opr.op[0]->pt.pos->p = p->opr.op[1]->id.pos;
+                case 'p'	:		p->opr.op[0]->pt.pos->p = p->opr.op[1]->id.pos;
                 					return 0;
-                case '=':       return symTable[p->opr.op[0]->id.value] = ex(p->opr.op[1]);
+                case '=':       p->opr.op[0]->id.pos->attivo = 1;
+                					return p->opr.op[0]->id.pos->value = ex(p->opr.op[1]);
                 case UMINUS:    return -ex(p->opr.op[0]);
                 case '+':       return ex(p->opr.op[0]) + ex(p->opr.op[1]);
                 case '-':       return ex(p->opr.op[0]) - ex(p->opr.op[1]);

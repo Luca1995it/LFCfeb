@@ -3,14 +3,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
-#include "y.tab.h"
 
-#define NUM_VAR 100
+#define DIM_MAX 100
 
 
-typedef enum { typeCon, typeId, typeOpr, typePunt } nodeEnum; /* used in the struct nodeType
-                                                     to define the type of node*/
+typedef enum { typeCon, typeId, typeOpr, typePunt } nodeEnum; 
+
+typedef struct {
+	char * name;
+	int value;
+	int attivo;
+} entryVar;
+
+
+typedef struct {
+	char * name;
+	entryVar * p;
+	int attivo;
+} entryPointer;
 
 /* constants */
 typedef struct {
@@ -37,7 +47,6 @@ typedef struct {
 
 typedef struct nodeTypeTag {
     nodeEnum type;              /* type of node */
-    int uid;
     union {
         conNodeType con;        /* constants */
         idNodeType id;          /* identifiers */
@@ -46,42 +55,25 @@ typedef struct nodeTypeTag {
     };
 } nodeType;
 
-typedef struct {
-	char * name;
-	int value;
-	int attivo;
-} entryVar;
-
-
-typedef struct {
-	char * name;
-	entryVar * p;
-	int attivo;
-} entryPointer;
-
 
 
 /* prototypes */
-entryVar * insertVariable(char * n, int value);
-entryVar * searchVariabile(char * n);
+entryVar * insertVariable(char * n);
+entryVar * searchVariable(char * n);
 
 entryPointer * insertPointer(char * n);
 entryPointer * searchPointer(char * n);
 
 
-nodeType *opr(int oper, int nops, ...);
-nodeType *id(char * nome);
-nodeType *con(int value);
-nodeType *pt(char * nome);
+nodeType * opr(int oper, int nops, ...);
+nodeType * id(char * nome);
+nodeType * con(int value);
+nodeType * pt(char * nome);
 
 void freeNode(nodeType *p);
 int ex(nodeType *p);
          
-entryVar * varTable[NUM_VAR];   
-entryPointer * puntTable[NUM_VAR]; 
-
-int dimVar = 0;
-int dimPt = 0;
+void yyerror(char *s);       
 
 #endif    
 

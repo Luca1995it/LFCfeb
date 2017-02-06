@@ -12,13 +12,13 @@ YACC = yacc -d
 
 # We assume that your C-compiler is called cc
 
-CC = cc
+CC = gcc
 
 # calc is the final object that we will generate, it is produced by
 # the C compiler from the y.tab.o and from the lex.yy.o
 
 interpreter: y.tab.o lex.yy.o
-	$(CC) -o interpreter y.tab.o lex.yy.o calcInterpreter.c -ll -lm
+	$(CC) -o interpreter y.tab.o lex.yy.o calc.c -ll -lm
 
 # These dependency rules indicate that
 # (1) lex.yy.o depends on lex.yy.c and y.tab.h
