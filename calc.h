@@ -4,7 +4,7 @@
  * revision Lorenzo Massimo Gramola (2015): added node identifier for graph building
  * revision Lorenzo Massimo Gramola (2016) 
  */
-typedef enum { typeCon, typeId, typeOpr } nodeEnum; /* used in the struct nodeType
+typedef enum { typeCon, typeId, typeOpr, typePunt } nodeEnum; /* used in the struct nodeType
                                                      to define the type of node*/
 
 /* constants */
@@ -14,15 +14,21 @@ typedef struct {
 
 /* identifiers */
 typedef struct {
-    int i;                      /* subscript to sym array */
+    varId * pos;                /* subscript to sym array */
 } idNodeType;
+
+/* pointers */
+typedef struct {
+	varPt * pos;
+} puntNodeType;
 
 /* operators */
 typedef struct {
     int oper;                   /* operator */
     int nops;                   /* number of operands */
-    struct nodeTypeTag **op;	/* operands */
+    struct nodeTypeTag **op;		/* operands */
 } oprNodeType;
+
 
 typedef struct nodeTypeTag {
     nodeEnum type;              /* type of node */
@@ -31,15 +37,27 @@ typedef struct nodeTypeTag {
         conNodeType con;        /* constants */
         idNodeType id;          /* identifiers */
         oprNodeType opr;        /* operators */
+        puntNodeType pt;			/* pointers */
     };
 } nodeType;
 
 typedef struct {
-	char* name;
+	char * name;
 	int value;
-} var; 
+} varId;
+
+typedef struct {
+	char * name;
+	varId * pt;
+} varPt;
 
 
-var * insertVariable(char * n);
-extern var symTable[1000];
+void insertVariable(char * n, int value);
+varId * searchVariabile(char * n);
+
+void insertPointer(char * n, nodeType * p);
+varPt * searchPointer(char * n);
+
+extern varId symTableVariabili[1000];           
+extern varPr symTablePuntatori[1000];        
 

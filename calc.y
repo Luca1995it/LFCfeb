@@ -15,14 +15,16 @@
     nodeType *opr(int oper, int nops, ...);
     nodeType *id(int i);
     nodeType *con(int value);
+    nodeType *pt(nodeType * p);
     void freeNode(nodeType *p);
     int ex(nodeType *p);
     int yylex(void);
 
     void yyerror(char *s);
-    var symTable[1000];                    /* symbol table */
-    int uid = 0;
-    %}
+    varId symTableVariabili[1000];           
+    varPr symTablePuntatori[1000];         
+
+%}
 
 %union {
     int iValue;
@@ -69,8 +71,7 @@ stmt:
         | IF '(' expr ')' stmt %prec IFX     {$$ = opr(IF,2,$3,$5);}
         | IF '(' expr ')' stmt ELSE stmt     {$$ = opr(IF,3,$3,$5,$7);}
         | '{' stmt_list '}'                  {$$ = $2;}
-	| PUNTATORE '=' '@' VARIABLE ';'     {$$ = opr('p',2,$1,$4);}
-	| PUNTATORE			     {$$ = opr()}
+		| PUNTATORE '=' '@' VARIABLE ';'     {$$ = opr('p',2,$1,id($4));}
         ;
 
 
@@ -81,6 +82,7 @@ stmt_list:
 expr:
         INTEGER                 {$$ = con($1);} //manage constants
         | VARIABLE              {$$ = id($1);} //manage variables - namely an IDENTIFIER
+        | PUNTATORE				{$$ = pt($1);}		
         | '-' expr %prec UMINUS {$$ = opr(UMINUS,1,$2);}
         | expr '+' expr         {$$ = opr('+',2,$1,$3);}
         | expr '-' expr         {$$ = opr('-',2,$1,$3);}
@@ -92,8 +94,7 @@ expr:
         | expr LE expr          {$$ = opr(LE,2,$1,$3);}
         | expr NE expr          {$$ = opr(NE,2,$1,$3);}
         | expr EQ expr          {$$ = opr(EQ,2,$1,$3);}
-        | '(' expr ')'          {$$ = $2;}
-	| PUNTATORE ';'		{$$ = id($1);}		
+        | '(' expr ')'          {$$ = $2;
         ;
 
 %%
@@ -112,7 +113,7 @@ nodeType *con(int value){
     return p;
 }
 
-nodeType *id (int i){
+nodeType *id (char * nome){
     nodeType *p;
     if((p=malloc(sizeof(nodeType)))==NULL){
         yyerror("out of memory");
@@ -123,6 +124,19 @@ nodeType *id (int i){
 
     return p;
 }
+
+nodeType *pt(char * nome){
+	nodeType *p;
+    if((p=malloc(sizeof(nodeType)))==NULL){
+        yyerror("out of memory");
+    }
+    p->uid = uid++;
+    p->type = typeId;
+    p->id.i=i;
+
+    return p;
+}
+
 nodeType *opr(int oper, int nops, ...){
     va_list ap; /* (ap = argument pointer) va_list is used to declare a variable
                  which, from time to time, is referring to an argument*/

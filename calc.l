@@ -30,7 +30,7 @@
                     return INTEGER;
                 }
 
-[<][a-z][>]	{
+[<][a-z][>]		{
                     yylval.sIndex = strdup(yytext);
                     return PUNTATORE;
                 }
