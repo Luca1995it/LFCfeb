@@ -1,9 +1,14 @@
-/** calculator calc.y
- * origin source by Tom Niemann at epaperpress.com/lexandyacc
- * revision Lorenzo Massimo Gramola (2014)
- * revision Lorenzo Massimo Gramola (2015): added node identifier for graph building
- * revision Lorenzo Massimo Gramola (2016) 
- */
+#ifndef CALC_H
+#define CALC_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include "y.tab.h"
+
+#define NUM_VAR 100
+
+
 typedef enum { typeCon, typeId, typeOpr, typePunt } nodeEnum; /* used in the struct nodeType
                                                      to define the type of node*/
 
@@ -14,12 +19,12 @@ typedef struct {
 
 /* identifiers */
 typedef struct {
-    varId * pos;                /* subscript to sym array */
+    entryVar * pos;                /* subscript to sym array */
 } idNodeType;
 
 /* pointers */
 typedef struct {
-	varPt * pos;
+	entryPointer * pos;
 } puntNodeType;
 
 /* operators */
@@ -44,20 +49,39 @@ typedef struct nodeTypeTag {
 typedef struct {
 	char * name;
 	int value;
-} varId;
+	int attivo;
+} entryVar;
+
 
 typedef struct {
 	char * name;
-	varId * pt;
-} varPt;
+	entryVar * p;
+	int attivo;
+} entryPointer;
 
 
-void insertVariable(char * n, int value);
-varId * searchVariabile(char * n);
 
-void insertPointer(char * n, nodeType * p);
-varPt * searchPointer(char * n);
+/* prototypes */
+entryVar * insertVariable(char * n, int value);
+entryVar * searchVariabile(char * n);
 
-extern varId symTableVariabili[1000];           
-extern varPr symTablePuntatori[1000];        
+entryPointer * insertPointer(char * n);
+entryPointer * searchPointer(char * n);
+
+
+nodeType *opr(int oper, int nops, ...);
+nodeType *id(char * nome);
+nodeType *con(int value);
+nodeType *pt(char * nome);
+
+void freeNode(nodeType *p);
+int ex(nodeType *p);
+         
+entryVar * varTable[NUM_VAR];   
+entryPointer * puntTable[NUM_VAR]; 
+
+int dimVar = 0;
+int dimPt = 0;
+
+#endif    
 
