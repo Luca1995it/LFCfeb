@@ -141,14 +141,15 @@ int ex(nodeType *p) {
         case typeCon:       return p->con.value;
         case typeId:        	if(!p->id.pos->attivo){
         							yyerror("Var not declared");
-        						}
-        						return p->id.pos->value;
+        							return 0;
+        						} else return p->id.pos->value;
         	case typePunt:		if(!p->pt.pos->attivo){
         							yyerror("Pointer not declared");
+        							return 0;
         						} else if(p->pt.pos->p == NULL){
         							yyerror("Pointer not assigned");
-        						}
-        						return p->pt.pos->p->value;
+        							return 0;
+        						} else return p->pt.pos->p->value;
         case typeOpr:
             switch(p->opr.oper) {
                 case WHILE:

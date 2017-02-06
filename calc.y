@@ -17,7 +17,8 @@
 %nonassoc IFX
 %nonassoc ELSE
 
-%left GE LE EQ NE '>' '<' ';'
+%left GE LE EQ NE '>' '<'
+%right ';'
 %left '+' '-'
 %left '*' '/'
 %nonassoc UMINUS
@@ -56,7 +57,7 @@ stmt_list:
 expr:
         INTEGER                 {$$ = con($1);} //manage constants
         | VARIABLE              {$$ = id($1);} //manage variables - namely an IDENTIFIER
-        | '<' VARIABLE '>'		{$$ = pt($2);}		
+        | '<' VARIABLE '>'		{$$ = pt($2); }		
         | '-' expr %prec UMINUS {$$ = opr(UMINUS,1,$2);}
         | expr '+' expr         {$$ = opr('+',2,$1,$3);}
         | expr '-' expr         {$$ = opr('-',2,$1,$3);}

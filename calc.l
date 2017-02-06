@@ -10,10 +10,7 @@
 
 %%
 
-[^"while"][^"print"][^"if"][^"else"][a-zA-Z][0-9A-Za-z]*          {
-                    yylval.sIndex = strdup(yytext);
-                    return VARIABLE;
-                }
+
 0               {
                     yylval.iValue = atoi(yytext);
                     return INTEGER;
@@ -23,7 +20,7 @@
                     return INTEGER;
                 }
 
-[-+()<>=*/;{}.><]   { return *yytext; }
+[-+()<>=*/;{}@.]   { return *yytext; }
 
 ">="            return GE;
 "<="            return LE;
@@ -33,6 +30,11 @@
 "if"            return IF;
 "else"          return ELSE;
 "print"         return PRINT;
+
+[a-zA-Z][0-9A-Za-z]*          {
+                    yylval.sIndex = strdup(yytext);
+                    return VARIABLE;
+                }
 
 
 [ \t\n]         ;	/* skip whitespace */

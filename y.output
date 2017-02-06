@@ -262,11 +262,11 @@ state 15
 
     '>'  shift, and go to state 27
     '<'  shift, and go to state 28
-    ';'  shift, and go to state 29
-    NE   shift, and go to state 30
-    EQ   shift, and go to state 31
-    LE   shift, and go to state 32
-    GE   shift, and go to state 33
+    NE   shift, and go to state 29
+    EQ   shift, and go to state 30
+    LE   shift, and go to state 31
+    GE   shift, and go to state 32
+    ';'  shift, and go to state 33
     '+'  shift, and go to state 34
     '-'  shift, and go to state 35
     '*'  shift, and go to state 36
@@ -345,11 +345,11 @@ state 21
 
     '>'  shift, and go to state 27
     '<'  shift, and go to state 28
+    NE   shift, and go to state 29
+    EQ   shift, and go to state 30
+    LE   shift, and go to state 31
+    GE   shift, and go to state 32
     ';'  shift, and go to state 43
-    NE   shift, and go to state 30
-    EQ   shift, and go to state 31
-    LE   shift, and go to state 32
-    GE   shift, and go to state 33
     '+'  shift, and go to state 34
     '-'  shift, and go to state 35
     '*'  shift, and go to state 36
@@ -397,10 +397,10 @@ state 24
 
     '>'  shift, and go to state 27
     '<'  shift, and go to state 28
-    NE   shift, and go to state 30
-    EQ   shift, and go to state 31
-    LE   shift, and go to state 32
-    GE   shift, and go to state 33
+    NE   shift, and go to state 29
+    EQ   shift, and go to state 30
+    LE   shift, and go to state 31
+    GE   shift, and go to state 32
     '+'  shift, and go to state 34
     '-'  shift, and go to state 35
     '*'  shift, and go to state 36
@@ -464,13 +464,6 @@ state 28
 
 state 29
 
-    6 stmt: expr ';' .
-
-    $default  reduce using rule 6 (stmt)
-
-
-state 30
-
    28 expr: expr NE . expr
 
     INTEGER   shift, and go to state 4
@@ -482,7 +475,7 @@ state 30
     expr  go to state 50
 
 
-state 31
+state 30
 
    29 expr: expr EQ . expr
 
@@ -495,7 +488,7 @@ state 31
     expr  go to state 51
 
 
-state 32
+state 31
 
    27 expr: expr LE . expr
 
@@ -508,7 +501,7 @@ state 32
     expr  go to state 52
 
 
-state 33
+state 32
 
    26 expr: expr GE . expr
 
@@ -519,6 +512,13 @@ state 33
     '('       shift, and go to state 12
 
     expr  go to state 53
+
+
+state 33
+
+    6 stmt: expr ';' .
+
+    $default  reduce using rule 6 (stmt)
 
 
 state 34
@@ -596,11 +596,11 @@ state 39
 
     '>'  shift, and go to state 27
     '<'  shift, and go to state 28
+    NE   shift, and go to state 29
+    EQ   shift, and go to state 30
+    LE   shift, and go to state 31
+    GE   shift, and go to state 32
     ';'  shift, and go to state 59
-    NE   shift, and go to state 30
-    EQ   shift, and go to state 31
-    LE   shift, and go to state 32
-    GE   shift, and go to state 33
     '+'  shift, and go to state 34
     '-'  shift, and go to state 35
     '*'  shift, and go to state 36
@@ -623,10 +623,10 @@ state 40
 
     '>'  shift, and go to state 27
     '<'  shift, and go to state 28
-    NE   shift, and go to state 30
-    EQ   shift, and go to state 31
-    LE   shift, and go to state 32
-    GE   shift, and go to state 33
+    NE   shift, and go to state 29
+    EQ   shift, and go to state 30
+    LE   shift, and go to state 31
+    GE   shift, and go to state 32
     '+'  shift, and go to state 34
     '-'  shift, and go to state 35
     '*'  shift, and go to state 36
@@ -651,10 +651,10 @@ state 41
 
     '>'  shift, and go to state 27
     '<'  shift, and go to state 28
-    NE   shift, and go to state 30
-    EQ   shift, and go to state 31
-    LE   shift, and go to state 32
-    GE   shift, and go to state 33
+    NE   shift, and go to state 29
+    EQ   shift, and go to state 30
+    LE   shift, and go to state 31
+    GE   shift, and go to state 32
     '+'  shift, and go to state 34
     '-'  shift, and go to state 35
     '*'  shift, and go to state 36
@@ -680,6 +680,8 @@ state 44
 
     5 stmt: '<' VARIABLE '>' . ';'
    18 expr: '<' VARIABLE '>' .
+
+    ';'  shift, and go to state 63
 
     $default  reduce using rule 18 (expr)
 

@@ -1,0 +1,16 @@
+x = 0;
+aaa = 4;
+bbb = 7;
+<p>;
+
+if(x){ 
+	print x;
+}
+p = @ x;
+x = 1;
+if (<p>) {
+print x; 
+}
+print aaa + <p>;
+
+
