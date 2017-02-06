@@ -2,7 +2,7 @@
     #include "calc.h"
     
     int yylex(void);
-
+	FILE * yyin;
 %}
 
 %union {
